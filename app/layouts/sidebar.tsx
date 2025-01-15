@@ -1,4 +1,4 @@
-import { Form, Link, NavLink, Outlet, useNavigation } from "react-router";
+import { Form, Link, NavLink, Outlet, useNavigation, useSubmit } from "react-router";
 import { getContacts } from "../data";
 import type { Route } from "./+types/sidebar";
 import { useEffect } from "react";
@@ -22,6 +22,10 @@ export default function SidebarLayout({ loaderData }: Route.ComponentProps) {
         }
     }, [q]);
 
+    const submit = useSubmit();
+
+    const searching = navigation.location && new URLSearchParams(navigation.location.search).has("q");
+
     return (
         <>
             <div id="sidebar">
@@ -29,9 +33,9 @@ export default function SidebarLayout({ loaderData }: Route.ComponentProps) {
                     <Link to="about">React Router Contacts</Link>
                 </h1>
                 <div>
-                    <Form id="search-form" role="search">
-                        <input aria-label="Search contacts" defaultValue={q || ""} id="q" name="q" placeholder="Search" type="search" />
-                        <div aria-hidden hidden={true} id="search-spinner" />
+                    <Form onChange={(event) => submit(event.currentTarget)} id="search-form" role="search">
+                        <input className={searching ? "loading" : ""} aria-label="Search contacts" defaultValue={q || ""} id="q" name="q" placeholder="Search" type="search" />
+                        <div aria-hidden hidden={!searching} id="search-spinner" />
                     </Form>
                     <Form method="post">
                         <button type="submit">New</button>
