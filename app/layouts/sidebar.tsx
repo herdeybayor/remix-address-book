@@ -1,4 +1,4 @@
-import { Form, Link, NavLink, Outlet, useNavigation, useSubmit } from "react-router";
+import { Form, Link, NavLink, Outlet, useFetcher, useFetchers, useNavigation, useSubmit } from "react-router";
 import { getContacts } from "../data";
 import type { Route } from "./+types/sidebar";
 import { useEffect } from "react";
@@ -25,6 +25,8 @@ export default function SidebarLayout({ loaderData }: Route.ComponentProps) {
     const submit = useSubmit();
 
     const searching = navigation.location && new URLSearchParams(navigation.location.search).has("q");
+
+    const favoriteFetcher = useFetcher({ key: "favorite" });
 
     return (
         <>
@@ -63,7 +65,11 @@ export default function SidebarLayout({ loaderData }: Route.ComponentProps) {
                                         ) : (
                                             <i>No Name</i>
                                         )}
-                                        {contact.favorite ? <span>★</span> : null}
+                                        {favoriteFetcher.formData && favoriteFetcher?.data?.id === contact.id ? (
+                                            <span>{favoriteFetcher.formData.get("favorite") === "true" ? "★" : ""}</span>
+                                        ) : contact.favorite ? (
+                                            <span>★</span>
+                                        ) : null}
                                     </NavLink>
                                 </li>
                             ))}
